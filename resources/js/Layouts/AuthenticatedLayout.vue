@@ -1,11 +1,26 @@
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import ApplicationLogo from "@/Components/ApplicationLogo.vue";
 import Dropdown from "@/Components/Dropdown.vue";
 import DropdownLink from "@/Components/DropdownLink.vue";
 import NavLink from "@/Components/NavLink.vue";
 import ResponsiveNavLink from "@/Components/ResponsiveNavLink.vue";
+import ResponsiveNavColorChange from "@/Components/ResponsiveNavColorChange.vue";
 import { Link } from "@inertiajs/vue3";
+import { initFlowbite } from 'flowbite';
+
+import {
+    listenSchemeChange,
+    getStorageTheme,
+    loadTheme,
+} from '@/helpers/color-theme'
+
+// initialize components based on data attribute selectors
+onMounted(() => {
+    listenSchemeChange();
+    loadTheme();
+    initFlowbite();
+});
 
 const showingNavigationDropdown = ref(false);
 
@@ -82,6 +97,7 @@ const currentRouteIn = (...routeNames) => !!routeNames.find(routeName => route()
                                     </template>
 
                                     <template #content>
+                                        <ResponsiveNavColorChange />
                                         <DropdownLink :href="route('profile.edit')">
                                             Profile
                                         </DropdownLink>
@@ -168,6 +184,7 @@ const currentRouteIn = (...routeNames) => !!routeNames.find(routeName => route()
                         </div>
 
                         <div class="mt-3 space-y-1">
+                            <ResponsiveNavColorChange />
                             <ResponsiveNavLink :href="route('profile.edit')">
                                 Profile
                             </ResponsiveNavLink>
