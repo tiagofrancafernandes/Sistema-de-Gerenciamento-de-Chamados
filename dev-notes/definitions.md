@@ -6,6 +6,24 @@
 - Largura padrão `w-10/12 mx-auto`
 
 
+#### Container
+```html
+<div class="container w-7xl mx-auto px-6 mx-auto grid py-6">
+    <!-- Content goes here -->
+</div>
+```
+
+```html
+<div class="container w-7xl mx-auto px-6 mx-auto grid py-6">
+    <div class="w-full overflow-hidden rounded-lg shadow-xs">
+        <div class="w-full overflow-x-auto">
+            <!-- Content goes here -->
+        </div>
+    </div>
+</div>
+```
+
+
 #### Cards
 ```html
 <div class="w-10/12 mx-auto overflow-hidden rounded-lg shadow-xs py-4">

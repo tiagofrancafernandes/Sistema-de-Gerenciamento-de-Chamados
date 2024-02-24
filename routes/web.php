@@ -4,6 +4,7 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+use App\Http\Controllers\Web\CustomerController;
 
 /*
 |--------------------------------------------------------------------------
@@ -29,7 +30,12 @@ Route::prefix('_')
     ->middleware(['auth', 'verified'])
     ->group(function () {
         Route::get('/dashboard', fn () => Inertia::render('Dashboard'))->name('dashboard');
-        Route::get('/customers', fn () => Inertia::render('Customers/Index'))->name('customers');
+
+        Route::prefix('customers')->name('customers.')->group(function () {
+            Route::get('/', [CustomerController::class, 'index'])->name('index');
+            Route::get('/{customerId}', [CustomerController::class, 'show'])
+                ->name('show');
+        });
     });
 
 Route::middleware('auth')->group(function () {
