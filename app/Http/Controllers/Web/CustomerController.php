@@ -16,6 +16,11 @@ class CustomerController extends Controller
 
     public function show(Request $request, int|string $customerId): Response
     {
-        return Inertia::render('Customers/Show');
+        return Inertia::render('Customers/Show', [
+            'icons' => [
+                'pencil' => svg('heroicon-s-pencil')->toHtml(),
+                'check-badge' => svg('heroicon-s-check-badge')->toHtml(),
+            ],
+        ]);
     }
 }

@@ -5,6 +5,7 @@ use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Controllers\Web\CustomerController;
+use App\Http\Controllers\Web\BladeIconsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -43,5 +44,11 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
+
+Route::get('blade-icons/{icon}.svg', [BladeIconsController::class, 'showIcon'])
+    ->name('blade.icon.svg');
+
+Route::get('blade-icons/{icon}', [BladeIconsController::class, 'showIcon'])
+    ->name('blade.icon');
 
 require __DIR__ . '/auth.php';
