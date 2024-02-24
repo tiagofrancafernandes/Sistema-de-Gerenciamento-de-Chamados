@@ -1,7 +1,26 @@
 <script setup>
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
-import { Head } from "@inertiajs/vue3";
-// import { h } from 'vue';
+import { computed } from 'vue'
+import { Head, usePage } from '@inertiajs/vue3'
+
+const page = usePage();
+const user = computed(() => page.props.auth.user);
+
+const getAsset = (asset) => {
+    let assetUrl = page.props.url?.assetUrl;
+
+    if (!assetUrl) {
+        return null;
+    }
+
+    assetUrl = assetUrl.replace(/(\/)$/, '');
+
+    if (!asset) {
+        return assetUrl;
+    }
+
+    return `${assetUrl}/${asset}`;
+}
 
 const fakeList = ["dolore", "asperiores", "possimus", "quisquam", "placeat", "illo"];
 
@@ -52,14 +71,14 @@ const getIcon = (icon, classes = 'w-5 h-4') => {
             </h2>
         </template>
 
-        <div class="container w-7xl mx-auto px-6 mx-auto grid py-6">
+        <div class="container w-7xl mx-auto px-6 grid py-6">
             <div class="w-full overflow-hidden rounded-lg shadow-xs">
                 <div class="block">
                     <div
                         class="flex items-center p-5 rounded-t-md shadow bg-cover bg-no-repeat pt-28"
-                        style="
-                            background-image: url(https://dashui.codescandy.com/tailwindcss/assets/images/background/profile-cover.jpg);
-                        "
+                        v-bind:style="{
+                            'background-image': 'url(' + getAsset('images/profile-cover.png') + ')',
+                        }"
                     ></div>
                     <div class="bg-white rounded-b-md shadow mb-6 dark:bg-gray-800">
                         <div class="flex items-center justify-between pt-4 pb-6 px-4">
@@ -154,7 +173,7 @@ const getIcon = (icon, classes = 'w-5 h-4') => {
             </div>
         </div>
 
-        <div class="container w-7xl mx-auto px-6 mx-auto grid py-6">
+        <div class="container w-7xl mx-auto px-6 grid py-6">
             <div class="w-full overflow-hidden rounded-lg shadow-xs">
                 <div class="mb-6 grid grid-cols-1 gap-x-6 gap-y-8 xl:grid-cols-3 md:grid-cols-2">
                     <template v-for="listItem in fakeList" v-key="listItem">
