@@ -8,6 +8,7 @@
     "devDependencies": {
         "@inertiajs/vue3": "^1.0.0",
         "@tailwindcss/forms": "^0.5.7",
+        "@tailwindcss/typography": "^0.5.10",
         "@vitejs/plugin-vue": "^5.0.0",
         "autoprefixer": "^10.4.17",
         "axios": "^1.6.4",
@@ -19,7 +20,6 @@
     },
     "dependencies": {
         "@alpinejs/focus": "^3.13.5",
-        "@tailwindcss/typography": "^0.5.10",
         "alpinejs": "^3.13.5",
         "flowbite": "^2.3.0",
         "postcss-nesting": "^12.0.3",

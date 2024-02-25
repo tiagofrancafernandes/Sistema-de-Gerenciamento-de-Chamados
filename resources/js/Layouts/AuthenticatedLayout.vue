@@ -60,6 +60,8 @@ const currentRouteIn = (...routeNames) => !!routeNames.find(routeName => route()
                                     :active="currentRouteIn(
                                         'customers.index',
                                         'customers.show',
+                                        'customers.edit',
+                                        'customers.create',
                                     )
                                     "
                                 >

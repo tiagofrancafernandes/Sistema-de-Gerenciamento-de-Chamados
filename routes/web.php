@@ -34,8 +34,10 @@ Route::prefix('_')
 
         Route::prefix('customers')->name('customers.')->group(function () {
             Route::get('/', [CustomerController::class, 'index'])->name('index');
-            Route::get('/{customerId}', [CustomerController::class, 'show'])
-                ->name('show');
+            Route::get('/create', [CustomerController::class, 'create'])->name('create');
+            Route::get('/{customerId}', [CustomerController::class, 'show'])->name('show');
+            Route::get('/{customerId}/edit', [CustomerController::class, 'edit'])->name('edit');
+            Route::post('/{customerId}/update', [CustomerController::class, 'update'])->name('update');
         });
     });
 

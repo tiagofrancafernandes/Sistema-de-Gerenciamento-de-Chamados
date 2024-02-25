@@ -1,10 +1,22 @@
 <script setup>
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
-import { computed } from 'vue'
+import ModalForm from '@/Pages/Customers/ModalForm.vue';
+import { computed, ref } from 'vue';
 import { Head, usePage } from '@inertiajs/vue3'
 
 const page = usePage();
 const user = computed(() => page.props.auth.user);
+
+const props = defineProps({
+    icons: {
+        type: Object,
+    },
+    customerId: {
+        type: String,
+    },
+})
+
+let customerId = ref(props.customerId);
 
 const getAsset = (asset) => {
     let assetUrl = page.props.url?.assetUrl;
@@ -23,12 +35,6 @@ const getAsset = (asset) => {
 }
 
 const fakeList = ["dolore", "asperiores", "possimus", "quisquam", "placeat", "illo"];
-
-const props = defineProps({
-    icons: {
-        type: Object,
-    }
-})
 
 const getIcon = (icon, classes = 'w-5 h-4') => {
     if (!icon) {
@@ -134,6 +140,10 @@ const getIcon = (icon, classes = 'w-5 h-4') => {
                                     <span v-html="getIcon('pencil', 'w-3 h-3 text-white me-2')"></span>
                                     Editar cliente
                                 </a>
+
+                                <ModalForm
+                                    :customerId="customerId"
+                                />
                             </div>
                         </div>
                         <!-- nav -->

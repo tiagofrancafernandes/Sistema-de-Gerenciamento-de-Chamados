@@ -14,3 +14,4 @@
 - https://laravel.com/docs/10.x/starter-kits#breeze-and-inertia
 - https://github.com/estevanmaito/windmill-dashboard
 - https://github.com/tiagofrancafernandes/Sistema-de-Gerenciamento-de-Chamados
+- https://laracasts.com/series/build-modern-laravel-apps-using-inertia-js
