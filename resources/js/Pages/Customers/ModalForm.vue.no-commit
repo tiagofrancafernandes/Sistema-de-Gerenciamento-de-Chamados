@@ -1,0 +1,48 @@
+<script setup>
+import { useForm } from '@inertiajs/vue3'
+import { ref } from 'vue';
+
+const props = defineProps({
+    customerId: {
+        type: String,
+    },
+    icons: {
+        type: Object,
+    },
+});
+
+let customerId = ref(props.customerId);
+
+let form = useForm({
+    name: null,
+    email: null,
+});
+
+let submit = () => {
+    form.post(
+        route("customers.update", {
+            customerId: customerId.value,
+        }),
+        form
+    );
+};
+</script>
+
+<template>
+  <form @submit.prevent="submit">
+    <!-- name -->
+    <input type="text" v-model="form.name">
+    <div v-if="form.errors.name">{{ form.errors.name }}</div>
+
+    <!-- email -->
+    <input type="text" v-model="form.email">
+    <div v-if="form.errors.email">{{ form.errors.email }}</div>
+    <!-- password -->
+    <input type="password" v-model="form.password">
+    <div v-if="form.errors.password">{{ form.errors.password }}</div>
+    <!-- remember me -->
+    <input type="checkbox" v-model="form.remember"> Remember Me
+    <!-- submit -->
+    <button type="submit" :disabled="form.processing">Login</button>
+  </form>
+</template>

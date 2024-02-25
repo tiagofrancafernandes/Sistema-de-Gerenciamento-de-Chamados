@@ -51,6 +51,11 @@ class CustomerController extends Controller
 
     public function update(Request $request, int|string $customerId): JsonResponse
     {
+        $request->validate([
+            'name' => ['required', 'min:3'],
+            'email' => ['required', 'email'],
+        ]);
+
         return response()->json($request->all());
     }
 }

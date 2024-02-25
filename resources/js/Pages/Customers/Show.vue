@@ -63,6 +63,25 @@ const getIcon = (icon, classes = 'w-5 h-4') => {
 
     return iconData.replace('<svg ', `<svg class="${classes}" `);
 };
+
+let modalInfo = ref({
+    id: 'customerEdit',
+    title: 'Customer Edit',
+    triggerLabel: 'Edit',
+    actions: {
+        delete: true,
+        submit: true,
+    },
+    formHooks: {
+        onSuccess: (form) => console.log('onSuccess', form),
+        // onSuccess: (form) => form.reset('email'),
+        onStart: (form) => console.log('onStart', form),
+        onFinish: (form) => console.log('onFinish', form),
+    },
+    extra: {
+        customerId: customerId.value,
+    }
+})
 </script>
 
 <template>
@@ -133,17 +152,19 @@ const getIcon = (icon, classes = 'w-5 h-4') => {
                                 </div>
                             </div>
                             <div>
-                                <a
-                                    href="#!edit"
-                                    class="px-3 py-2 text-xs font-medium text-center inline-flex items-center text-white bg-indigo-700 rounded-lg hover:bg-indigo-800 focus:ring-0 focus:outline-none focus:ring-none dark:bg-indigo-600 dark:hover:bg-indigo-700 dark:focus:ring-none md:visible invisible"
-                                >
-                                    <span v-html="getIcon('pencil', 'w-3 h-3 text-white me-2')"></span>
-                                    Editar cliente
-                                </a>
-
                                 <ModalForm
-                                    :customerId="customerId"
-                                />
+                                    :modalInfo="modalInfo"
+                                    routeName="customers.update"
+                                    :routeParams="{
+                                        customerId: customerId,
+                                    }"
+                                    :triggerClass="'aaa'"
+                                >
+                                    <template v-slot:trigger>
+                                        <span v-html="getIcon('pencil', 'w-3 h-3 text-white me-2')"></span>
+                                        Editar cliente
+                                    </template>
+                                </ModalForm>
                             </div>
                         </div>
                         <!-- nav -->
