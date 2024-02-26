@@ -14,6 +14,10 @@ const props = defineProps({
         type: String,
         default: 'py-1 bg-white dark:bg-gray-700',
     },
+    closeOnClick: {
+        type: Boolean,
+        default: true,
+    },
 });
 
 const closeOnEscape = (e) => {
@@ -25,6 +29,15 @@ const closeOnEscape = (e) => {
 onMounted(() => document.addEventListener('keydown', closeOnEscape));
 onUnmounted(() => document.removeEventListener('keydown', closeOnEscape));
 
+const open = ref(false);
+
+const closeOnClick = () => {
+    if (!props.closeOnClick) {
+        return;
+    }
+
+    open.value = false;
+};
 const widthClass = computed(() => {
     return {
         48: 'w-48',
@@ -34,14 +47,14 @@ const widthClass = computed(() => {
 const alignmentClasses = computed(() => {
     if (props.align === 'left') {
         return 'ltr:origin-top-left rtl:origin-top-right start-0';
-    } else if (props.align === 'right') {
-        return 'ltr:origin-top-right rtl:origin-top-left end-0';
-    } else {
-        return 'origin-top';
     }
-});
 
-const open = ref(false);
+    if (props.align === 'right') {
+        return 'ltr:origin-top-right rtl:origin-top-left end-0';
+    }
+
+    return 'origin-top';
+});
 </script>
 
 <template>
@@ -66,9 +79,12 @@ const open = ref(false);
                 class="absolute z-50 mt-2 rounded-md shadow-lg"
                 :class="[widthClass, alignmentClasses]"
                 style="display: none"
-                @click="open = false"
+                @click="closeOnClick"
             >
-                <div class="rounded-md ring-1 ring-black ring-opacity-5" :class="contentClasses">
+                <div
+                    class="rounded-md ring-1 ring-black ring-opacity-5 py-2"
+                    :class="contentClasses"
+                >
                     <slot name="content" />
                 </div>
             </div>

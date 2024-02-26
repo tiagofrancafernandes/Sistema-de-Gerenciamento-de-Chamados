@@ -162,7 +162,7 @@ let modalInfo = ref({
                                 >
                                     <template v-slot:trigger>
                                         <span v-html="getIcon('pencil', 'w-3 h-3 text-white me-2')"></span>
-                                        Editar cliente
+                                        Edit customer
                                     </template>
                                 </ModalForm>
                             </div>
@@ -178,23 +178,26 @@ let modalInfo = ref({
                                         <a
                                             href="#!"
                                             class="p-4 font-semibold border-t-2"
-                                            v-bind:class="{
-                                                'block text-indigo-600 border-indigo-600 bg-indigo-100 active':
-                                                    index === 0, // active
+                                            v-bind:class="[
+                                                ...( // active
+                                                    index === 0 ? [
+                                                        'block text-indigo-600 border-indigo-600 bg-indigo-100 active',
+                                                    ]
+                                                    : []
+                                                ),
 
-                                                // inactive
-                                                'inline-block text-gray-800 dark:text-gray-100 border-transparent': !(
-                                                    index === 0
+                                                ...( // inactive
+                                                    index !== 0 ? [
+                                                        'inline-block text-gray-800 dark:text-gray-100 dark:hover:text-indigo-600 border-transparent',
+                                                        'hover:text-indigo-600 hover:border-indigo-600 hover:bg-indigo-100',
+                                                    ]
+                                                    : []
                                                 ),
-                                                'hover:text-indigo-600 hover:border-indigo-600 hover:bg-indigo-100': !(
-                                                    index === 0
-                                                ),
-                                            }"
+                                            ]"
                                             v-bind:aria-current="
                                                 index === 0 ? 'page' : null
                                             "
-                                            >{{ item }}</a
-                                        >
+                                        >{{ item }}</a>
                                     </li>
                                 </template>
                             </ul>

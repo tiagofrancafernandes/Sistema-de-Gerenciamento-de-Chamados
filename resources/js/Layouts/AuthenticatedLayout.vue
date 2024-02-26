@@ -1,13 +1,15 @@
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, computed } from "vue";
 import ApplicationLogo from "@/Components/ApplicationLogo.vue";
 import Dropdown from "@/Components/Dropdown.vue";
 import DropdownLink from "@/Components/DropdownLink.vue";
+import NavLinkDropdown from "@/Components/NavLinkDropdown.vue";
 import NavLink from "@/Components/NavLink.vue";
 import ResponsiveNavLink from "@/Components/ResponsiveNavLink.vue";
 import ResponsiveNavColorChange from "@/Components/ResponsiveNavColorChange.vue";
-import { Link } from "@inertiajs/vue3";
+import { Link, usePage } from "@inertiajs/vue3";
 import { initFlowbite } from 'flowbite';
+// import StringHelpers from '@/helpers/string-helpers'
 
 import {
     listenSchemeChange,
@@ -24,7 +26,184 @@ onMounted(() => {
 
 const showingNavigationDropdown = ref(false);
 
-const currentRouteIn = (...routeNames) => !!routeNames.find(routeName => route().current(routeName))
+const currentRouteIn = (...routeNames) => {
+    routeNames = routeNames.flat();
+    return !!routeNames.find(routeName => typeof routeName === 'string' && route().current(routeName));
+}
+
+const page = usePage();
+
+const profileNavText = computed(
+    () => `
+        <div class="w-full inline-flex items-center justify-between">
+            <div
+                class="font-medium text-base text-gray-800 dark:text-gray-100"
+            >
+                ${page.props.auth.user.name}
+            </div>
+            <div class="font-medium text-sm text-gray-500 px-2">
+                ${page.props.auth.user.email}
+            </div>
+        </div>
+    `
+);
+
+const genLink = (params = {}) => {
+    const flatArray = (...items) => Array(...items).flat().flat().filter(i => i);
+
+    let tplLink = {
+        ...params,
+        key: params?.key || StringHelpers.randomString(15) , // string
+        route: params?.route || null , // string
+        url: params?.url || '#!' , // string
+        label: params?.label || '' , // string
+        as: params?.as || '' , // string #WIP
+        component: params?.component || null , // string
+        newTab: params?.newTab || false , // boolean
+        isPost: params?.isPost || false , // boolean
+        activeWhen: flatArray(params?.activeWhen || []) , // [route name]
+        hideOn: flatArray(params?.hideOn || []) ,// ['mobile'|'desktop' ...]
+        subItems: flatArray(params?.subItems || []) , // [link]
+        show: params?.show || (() => true), // () => boolean
+    };
+
+    return tplLink;
+}
+
+const links = [
+    {
+        key: 'dashboard',
+        route: 'dashboard',
+        url: null,
+        label: 'Dashboard',
+        newTab: false,
+        activeWhen: [
+            'dashboard'
+        ],
+        hideOn: [
+            // 'mobile',
+            // 'desktop',
+        ],
+        subItems: [],
+        show: () => true, // false|true
+    },
+    {
+        key: 'customers.index',
+        route: 'customers.index',
+        url: null,
+        label: 'Customers',
+        newTab: true,
+        isPost: false,
+        activeWhen: [
+            'customers.index',
+            'customers.show',
+            'customers.edit',
+            'customers.create',
+        ],
+        hideOn: [
+            // 'mobile',
+            // 'desktop',
+        ],
+        subItems: [],
+        show: () => true, // false|true
+        subItems: [],
+    },
+    genLink({
+        groups: [
+            'top-right',
+        ],
+        label: profileNavText.value,
+        hideOn: [
+            // 'mobile',
+            // 'desktop',
+        ],
+        activeWhen: [
+            'profile.edit',
+        ],
+        subItems: [
+            genLink({
+                url: '#!',
+                as: 'button',
+                label: 'Color change',
+                component: ResponsiveNavColorChange,
+                show: () => true, // false|true
+            }),
+            genLink({
+                route: 'profile.edit',
+                label: 'Profile',
+            }),
+            genLink({
+                route: 'logout',
+                label: 'Log Out',
+                isPost: true,
+            }),
+        ],
+        show: () => true, // false|true
+    }),
+];
+
+const navigationLinks = computed(() => {
+    return links.filter(item => {
+        if (!item.show || !item.show()) {
+            return false;
+        }
+
+        if (!item.key || !(item.route || item.url)) {
+            return false;
+        }
+
+        return true;
+    }) || [];
+});
+
+const getNavUrl = (link) => {
+    if (!link  || !(link.route || link.url)) {
+        return null;
+    }
+
+    if (link.route && typeof link.route === 'string') {
+        return route(link.route);
+    }
+
+    return link.url || null;
+}
+
+const isActive = (link) => {
+    if (!(link.activeWhen || link.route)) {
+        return false;
+    }
+
+    let activeWhen = Array(link.activeWhen);
+    activeWhen.push(link.route);
+
+    activeWhen = activeWhen.filter(item => item && typeof item === 'string');
+
+    return activeWhen && Array(activeWhen).length && currentRouteIn(activeWhen || []);
+}
+
+const navLinksForGroup = (group = null) => {
+    let navLinks = Array(navigationLinks.value).flat();
+
+    if (!group) {
+        return navLinks.filter(item => !Array(item.groups || []).flat().flat().length);
+    }
+
+    return navLinks.filter(item => Array(item.groups || []).flat().flat().includes(group));
+}
+
+const getLinks = (linksFor = null, group = null) => {
+    let navLinks = navLinksForGroup(group);
+
+    linksFor = (typeof linksFor === 'string') ? (`${linksFor}`).trim() : null;
+
+    if (!linksFor || !linksFor.length) {
+        return navLinks || [];
+    }
+
+    return navLinks.filter(
+        item => !Array(item.hideOn).flat().includes(linksFor)
+    ) || [];
+};
 </script>
 
 <template>
@@ -48,72 +227,203 @@ const currentRouteIn = (...routeNames) => !!routeNames.find(routeName => route()
 
                             <!-- Navigation Links -->
                             <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                                <NavLink
-                                    :href="route('dashboard')"
-                                    :active="route().current('dashboard')"
+                                <template
+                                    v-for="link in getLinks('desktop')"
+                                    v-key="link.key"
                                 >
-                                    Dashboard
-                                </NavLink>
-
-                                <NavLink
-                                    :href="route('customers.index')"
-                                    :active="currentRouteIn(
-                                        'customers.index',
-                                        'customers.show',
-                                        'customers.edit',
-                                        'customers.create',
-                                    )
-                                    "
-                                >
-                                    Customers
-                                </NavLink>
-                            </div>
-                        </div>
-
-                        <div class="hidden sm:flex sm:items-center sm:ms-6">
-                            <!-- Settings Dropdown -->
-                            <div class="ms-3 relative">
-                                <Dropdown align="right" width="48">
-                                    <template #trigger>
-                                        <span class="inline-flex rounded-md">
-                                            <button
-                                                type="button"
-                                                class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-800 hover:text-gray-700 dark:hover:text-gray-300 focus:outline-none transition ease-in-out duration-150"
-                                            >
-                                                {{ $page.props.auth.user.name }}
-
-                                                <svg
-                                                    class="ms-2 -me-0.5 h-4 w-4"
-                                                    xmlns="http://www.w3.org/2000/svg"
-                                                    viewBox="0 0 20 20"
-                                                    fill="currentColor"
-                                                >
-                                                    <path
-                                                        fill-rule="evenodd"
-                                                        d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                                                        clip-rule="evenodd"
-                                                    />
-                                                </svg>
-                                            </button>
-                                        </span>
+                                    <template v-if="link.component">
+                                        <component :is="link.component" />
                                     </template>
-
-                                    <template #content>
-                                        <ResponsiveNavColorChange />
-                                        <DropdownLink :href="route('profile.edit')">
-                                            Profile
-                                        </DropdownLink>
-                                        <DropdownLink
-                                            :href="route('logout')"
-                                            method="post"
-                                            as="button"
+                                    <template v-else>
+                                        <template
+                                            v-if="link.subItems && link.subItems.length"
                                         >
-                                            Log Out
-                                        </DropdownLink>
+                                            <NavLinkDropdown
+                                                :active="isActive(link)"
+                                            >
+                                                <template
+                                                    #label
+                                                >
+                                                    <span v-html="link.label"></span>
+                                                </template>
+
+                                                <template #items>
+                                                    <template
+                                                        v-for="subLink in link.subItems"
+                                                        v-key="subLink.key"
+                                                    >
+                                                        <template v-if="subLink.component">
+                                                            <component :is="subLink.component" />
+                                                        </template>
+                                                        <template v-else>
+                                                            <DropdownLink
+                                                                v-if="subLink.isPost"
+                                                                :href="getNavUrl(subLink)"
+                                                                :active="isActive(subLink)"
+                                                                method="post"
+                                                                as="button"
+                                                                v-html="subLink.label"
+                                                            />
+
+                                                            <ResponsiveNavLink
+                                                                v-else
+                                                                :href="getNavUrl(subLink)"
+                                                                :active="isActive(subLink)"
+                                                                v-html="subLink.label"
+                                                            />
+                                                        </template>
+                                                    </template>
+
+
+                                                    <!-- <ResponsiveNavColorChange />
+                                                    <DropdownLink :href="route('profile.edit')">
+                                                        Profile
+                                                    </DropdownLink>
+                                                    <DropdownLink
+                                                        :href="route('logout')"
+                                                        method="post"
+                                                        as="button"
+                                                    >
+                                                        Log Out
+                                                    </DropdownLink> -->
+                                                </template>
+                                            </NavLinkDropdown>
+                                        </template>
+
+                                        <template v-else>
+                                            <NavLink
+                                                v-if="link.isPost"
+                                                :href="getNavUrl(link)"
+                                                :active="isActive(link)"
+                                                method="post"
+                                                as="button"
+                                                v-html="link.label"
+                                            />
+
+                                            <NavLink
+                                                v-else
+                                                :href="getNavUrl(link)"
+                                                :active="isActive(link)"
+                                                :newTab="!!link.newTab"
+                                            >
+                                                {{ link.label }}
+                                            </NavLink>
+                                        </template>
                                     </template>
-                                </Dropdown>
+                                </template>
                             </div>
                         </div>
+
+                        <!-- Settings Dropdown -->
+                        <template
+                            v-for="link in getLinks('mobile', 'top-right')"
+                            v-key="link.key"
+                        >
+                            <template v-if="link.component">
+                                <component :is="link.component" />
+                            </template>
+                            <template v-else>
+                                <template
+                                    v-if="link.subItems && link.subItems.length"
+                                >
+                                    <NavLinkDropdown
+                                        :active="isActive(link)"
+                                    >
+                                        <template
+                                            #label
+                                        >
+                                            <span v-html="link.label"></span>
+                                        </template>
+
+                                        <template #items>
+                                            <template
+                                                v-for="subLink in link.subItems"
+                                                v-key="subLink.key"
+                                            >
+                                                <template v-if="subLink.component">
+                                                    <component :is="subLink.component" />
+                                                </template>
+                                                <template v-else>
+                                                    <DropdownLink
+                                                        v-if="subLink.isPost"
+                                                        :href="getNavUrl(subLink)"
+                                                        :active="isActive(subLink)"
+                                                        method="post"
+                                                        as="button"
+                                                        v-html="subLink.label"
+                                                    />
+
+                                                    <ResponsiveNavLink
+                                                        v-else
+                                                        :href="getNavUrl(subLink)"
+                                                        :active="isActive(subLink)"
+                                                        v-html="subLink.label"
+                                                    />
+                                                </template>
+                                            </template>
+
+
+                                            <!-- <ResponsiveNavColorChange />
+                                            <DropdownLink :href="route('profile.edit')">
+                                                Profile
+                                            </DropdownLink>
+                                            <DropdownLink
+                                                :href="route('logout')"
+                                                method="post"
+                                                as="button"
+                                            >
+                                                Log Out
+                                            </DropdownLink> -->
+                                        </template>
+                                    </NavLinkDropdown>
+                                </template>
+
+                                <template v-else>
+                                    <NavLink
+                                        v-if="link.isPost"
+                                        :href="getNavUrl(link)"
+                                        :active="isActive(link)"
+                                        method="post"
+                                        as="button"
+                                        v-html="link.label"
+                                    />
+
+                                    <NavLink
+                                        v-else
+                                        :href="getNavUrl(link)"
+                                        :active="isActive(link)"
+                                        :newTab="!!link.newTab"
+                                    >
+                                        {{ link.label }}
+                                    </NavLink>
+                                </template>
+                            </template>
+                        </template>
+
+                        <!-- <NavLinkDropdown>
+                            <template #label>
+                                {{ $page.props.auth.user.name }}
+                            </template>
+
+                            <template #items>
+                                <ResponsiveNavColorChange />
+                                <DropdownLink :href="route('profile.edit')">
+                                    <span class="text-center inline-flex items-center">
+                                        <svg class="w-4 h-4 mr-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" data-slot="icon">
+                                            <path fill-rule="evenodd" d="M7.5 6a4.5 4.5 0 1 1 9 0 4.5 4.5 0 0 1-9 0ZM3.751 20.105a8.25 8.25 0 0 1 16.498 0 .75.75 0 0 1-.437.695A18.683 18.683 0 0 1 12 22.5c-2.786 0-5.433-.608-7.812-1.7a.75.75 0 0 1-.437-.695Z" clip-rule="evenodd"></path>
+                                        </svg>
+                                    </span>
+                                    Profile
+                                </DropdownLink>
+                                <DropdownLink
+                                    :href="route('logout')"
+                                    method="post"
+                                    as="button"
+                                >
+                                    Log Out
+                                </DropdownLink>
+                            </template>
+                        </NavLinkDropdown> -->
 
                         <!-- Hamburger -->
                         <div class="-me-2 flex items-center sm:hidden">
@@ -163,41 +473,39 @@ const currentRouteIn = (...routeNames) => !!routeNames.find(routeName => route()
                     }"
                     class="sm:hidden"
                 >
-                    <div class="pt-2 pb-3 space-y-1">
-                        <ResponsiveNavLink
-                            :href="route('dashboard')"
-                            :active="route().current('dashboard')"
+                    <template
+                        v-for="link in getLinks('mobile')"
+                        v-key="link.key"
+                    >
+                        <div
+                            :class="[
+                                'pt-2 pb-3 space-y-1',
+                                'border-t border-gray-200 dark:border-gray-600',
+                            ]"
                         >
-                            Dashboard
-                        </ResponsiveNavLink>
-                    </div>
-
-                    <!-- Responsive Settings Options -->
-                    <div class="pt-4 pb-1 border-t border-gray-200 dark:border-gray-600">
-                        <div class="px-4">
-                            <div
-                                class="font-medium text-base text-gray-800 dark:text-gray-200"
-                            >
-                                {{ $page.props.auth.user.name }}
-                            </div>
-                            <div class="font-medium text-sm text-gray-500">
-                                {{ $page.props.auth.user.email }}
-                            </div>
-                        </div>
-
-                        <div class="mt-3 space-y-1">
-                            <ResponsiveNavColorChange />
-                            <ResponsiveNavLink :href="route('profile.edit')">
-                                Profile
-                            </ResponsiveNavLink>
-                            <ResponsiveNavLink
-                                :href="route('logout')"
+                            <DropdownLink
+                                v-if="link.isPost"
+                                :href="getNavUrl(link)"
+                                :active="isActive(link)"
                                 method="post"
                                 as="button"
-                            >
-                                Log Out
-                            </ResponsiveNavLink>
+                                v-html="link.label"
+                            />
+
+                            <ResponsiveNavLink
+                                v-else
+                                :href="getNavUrl(link)"
+                                :active="isActive(link)"
+                                v-html="link.label"
+                            />
                         </div>
+                    </template>
+
+                    <!-- Responsive Settings Options -->
+                    <div
+                        class="py-2 border-t border-gray-200 dark:border-gray-600 border-b-2"
+                    >
+                            <ResponsiveNavColorChange />
                     </div>
                 </div>
             </nav>

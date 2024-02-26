@@ -1,5 +1,6 @@
 import './bootstrap';
 import '../css/app.css';
+import '@/helpers/_global-helpers';
 
 import { createApp, h } from 'vue';
 import { createInertiaApp, Link, Head } from '@inertiajs/vue3';
@@ -20,6 +21,18 @@ createInertiaApp({
             .mount(el);
     },
     progress: {
-        color: '#4B5563',
+        // The delay after which the progress bar will appear, in milliseconds...
+        delay: 0,
+
+        // The color of the progress bar...
+        //   color: '#4B5563',
+        color: '#5850ec',
+
+        // Whether to include the default NProgress styles...
+        includeCSS: true,
+
+        // Whether the NProgress spinner will be shown...
+        showSpinner: true,
     },
+    // progress: false,
 });

@@ -7,11 +7,16 @@ const props = defineProps({
         type: String,
         required: true,
     },
+    newTab: {
+        type: Boolean,
+        default: false,
+    },
     active: {
         type: Boolean,
     },
 });
 
+const target = computed(() => props.newTab ? '_blank' : '');
 const classes = computed(() =>
     props.active
         ? 'inline-flex items-center px-1 pt-1 border-b-2 border-indigo-400 dark:border-indigo-600 text-sm font-medium leading-5 text-gray-900 dark:text-gray-100 focus:outline-none focus:border-indigo-700 transition duration-150 ease-in-out'
@@ -20,7 +25,11 @@ const classes = computed(() =>
 </script>
 
 <template>
-    <Link :href="href" :class="classes">
+    <Link
+        :href="href"
+        :class="classes"
+        :target="target"
+    >
         <slot />
     </Link>
 </template>
