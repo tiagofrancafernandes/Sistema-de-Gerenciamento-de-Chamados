@@ -171,27 +171,35 @@ let modalInfo = ref({
                         <div class=" ">
                             <!-- list -->
                             <ul
-                                class="flex flex-no-wrap overflow-auto text-center text-gray-500 border-gray-300 border-t"
+                                class="flex flex-no-wrap overflow-auto text-center text-gray-500 border-gray-300/50 border-t p-0"
                             >
                                 <template v-for="(item, index) in fakeList" v-key="index">
                                     <li class="mr-1">
                                         <a
                                             href="#!"
-                                            class="p-4 font-semibold border-t-2"
+                                            class="p-4 font-semibold border-t-4 inline-block"
                                             v-bind:class="[
-                                                ...( // active
-                                                    index === 0 ? [
-                                                        'block text-indigo-600 border-indigo-600 bg-indigo-100 active',
-                                                    ]
-                                                    : []
-                                                ),
+                                                ...(
+                                                    index !== 0 ? [ // inactive
+                                                        'border-transparent',
+                                                        'bg-indigo-300/50 hover:bg-indigo-300', // Light bg
+                                                        'text-indigo-600 hover:text-indigo-700', // Light text
+                                                        'hover:border-indigo-600', // Light border
 
-                                                ...( // inactive
-                                                    index !== 0 ? [
-                                                        'inline-block text-gray-800 dark:text-gray-100 dark:hover:text-indigo-600 border-transparent',
-                                                        'hover:text-indigo-600 hover:border-indigo-600 hover:bg-indigo-100',
+                                                        'dark:hover:bg-indigo-600', // Dark bg
+                                                        'dark:text-indigo-100 dark:hover:text-indigo-100', // Dark text
+                                                        'dark:hover:border-indigo-100', // Dark border
+                                                    ] : [ // Active
+                                                        'active',
+
+                                                        'bg-indigo-300', // Light bg
+                                                        'text-indigo-600', // Light text
+                                                        'border-indigo-600', // Light border
+
+                                                        'dark:bg-indigo-600', // Dark bg
+                                                        'dark:text-indigo-100', // Dark text
+                                                        'dark:border-indigo-100', // Dark border
                                                     ]
-                                                    : []
                                                 ),
                                             ]"
                                             v-bind:aria-current="

@@ -1,6 +1,19 @@
 <script setup>
+import { onMounted } from "vue";
 import ApplicationLogo from '@/Components/ApplicationLogo.vue';
 import { Link } from '@inertiajs/vue3';
+
+import {
+    listenSchemeChange,
+    getStorageTheme,
+    loadTheme,
+} from '@/helpers/color-theme'
+
+onMounted(() => {
+    listenSchemeChange();
+    loadTheme();
+    initFlowbite();
+});
 </script>
 
 <template>
