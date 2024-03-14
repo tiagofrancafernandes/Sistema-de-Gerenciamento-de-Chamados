@@ -5704,7 +5704,7 @@
             "dist": {
                 "type": "path",
                 "url": "./packages/ignored/laravel-site-config",
-                "reference": "ab2db6614da7a2810842cc1698387e5919eb7c5c"
+                "reference": "4641e734c0230621b0a8b12ff9588203d44c734d"
             },
             "require": {
                 "illuminate/contracts": "^8.0|^9.0|^10.0|^11.0",
@@ -5716,6 +5716,7 @@
                 "symfony/finder": "^5.3|^6.0|^7.0"
             },
             "require-dev": {
+                "laravel/pint": "^1.14",
                 "mockery/mockery": "^1.5.1",
                 "orchestra/testbench": "^6.0|^7.0|^8.0|^9.0",
                 "phpunit/phpunit": "^9.0|^10.5|^11.0"
@@ -5725,7 +5726,11 @@
                 "laravel": {
                     "providers": [
                         "TiagoF2\\LaravelSiteConfig\\LaravelSiteConfigServiceProvider"
-                    ]
+                    ],
+                    "aliases": {
+                        "SiteConfigManager": "TiagoF2\\LaravelSiteConfig\\Helpers\\SiteConfigManager",
+                        "SiteConfig": "TiagoF2\\LaravelSiteConfig\\Models\\SiteConfig"
+                    }
                 }
             },
             "autoload": {

@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Controllers\Web\CustomerController;
 use App\Http\Controllers\Web\BladeIconsController;
+use App\Http\Controllers\Web\LocaleController;
 
 /*
 |--------------------------------------------------------------------------
@@ -19,9 +20,12 @@ use App\Http\Controllers\Web\BladeIconsController;
 */
 
 Route::get('/', function () {
+    $canRegister = siteConfig('admin.auth.canRegister', Route::has('register'));
+    $canLogin = siteConfig('admin.auth.canLogin', Route::has('login'));
+
     return Inertia::render('Welcome', [
-        'canLogin' => Route::has('login'),
-        'canRegister' => Route::has('register'),
+        'canLogin' => $canLogin,
+        'canRegister' => $canRegister,
         'laravelVersion' => Application::VERSION,
         'phpVersion' => PHP_VERSION,
     ]);
@@ -30,7 +34,6 @@ Route::get('/', function () {
 Route::prefix('_')
     ->middleware(['auth', 'verified'])
     ->group(function () {
-        // Route::get('/', fn () => redirect(route('dashboard')));
         Route::get('/', fn () => to_route('dashboard'));
         Route::get('/dashboard', fn () => Inertia::render('Dashboard'))->name('dashboard');
 
@@ -56,3 +59,5 @@ Route::get('blade-icons/{icon}', [BladeIconsController::class, 'showIcon'])
     ->name('blade.icon');
 
 require __DIR__ . '/auth.php';
+
+LocaleController::routes();
