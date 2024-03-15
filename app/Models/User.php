@@ -3,10 +3,13 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+
+use Illuminate\Database\Eloquent\Casts\AsCollection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class User extends Authenticatable
 {
@@ -23,6 +26,8 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'meta_data',
+        'customer_id',
     ];
 
     /**
@@ -43,5 +48,15 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
+        'meta_data' => AsCollection::class,
     ];
+
+    public function createdTickets(): HasMany
+    {
+        return $this->hasMany(User::class, 'created_by', 'id');
+    }
+    public function userTickets(): HasMany
+    {
+        return $this->hasMany(User::class, 'opened_to', 'id');
+    }
 }
