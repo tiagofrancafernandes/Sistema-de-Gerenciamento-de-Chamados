@@ -8,15 +8,19 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Enums\TicketStatus;
 use Illuminate\Database\Eloquent\Casts\AsCollection;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\Activitylog\LogOptions;
 
 class Ticket extends Model
 {
     use HasFactory;
     use SoftDeletes;
+    use LogsActivity;
 
     protected $fillable = [
         'title',
         'content',
+        'agent_id',
         'customer_id',
         'category_id',
         'created_by',
@@ -29,6 +33,21 @@ class Ticket extends Model
         'status' => TicketStatus::class,
         'extra_data' => AsCollection::class,
     ];
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        // https://spatie.be/docs/laravel-activitylog/v4/advanced-usage/logging-model-events
+        return LogOptions::defaults()
+            ->logOnly([
+                'title',
+                'content',
+                'status',
+                'extra_data',
+            ])
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs();
+        // Chain fluent methods for configuration options
+    }
 
     public function customer(): BelongsTo
     {
@@ -48,5 +67,10 @@ class Ticket extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class, 'opened_to', 'id');
+    }
+
+    public function agent(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'agent_id', 'id');
     }
 }

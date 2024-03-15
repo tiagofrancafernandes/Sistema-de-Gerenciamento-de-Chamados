@@ -22,6 +22,7 @@
         "laravel/framework": "^10.10",
         "laravel/sanctum": "^3.2",
         "laravel/tinker": "^2.8",
+        "spatie/laravel-activitylog": "^4.8",
         "tiagof2/laravel-site-config": "1.x-dev|^1.0",
         "tightenco/ziggy": "^1.0"
     },

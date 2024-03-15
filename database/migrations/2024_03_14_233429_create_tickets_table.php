@@ -14,6 +14,7 @@ return new class() extends Migration {
             $table->id();
             $table->string('title')->index();
             $table->longText('content')->nullable();
+            $table->unsignedBigInteger('agent_id')->index()->nullable();
             $table->unsignedBigInteger('customer_id')->index()->nullable();
             $table->unsignedBigInteger('category_id')->index()->nullable();
             $table->unsignedBigInteger('created_by')->index();
@@ -37,6 +38,10 @@ return new class() extends Migration {
                 ->on('users');
 
             $table->foreign('opened_to')
+                ->references('id')
+                ->on('users');
+
+            $table->foreign('agent_id')
                 ->references('id')
                 ->on('users');
 
