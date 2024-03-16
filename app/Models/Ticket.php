@@ -10,12 +10,15 @@ use Illuminate\Database\Eloquent\Casts\AsCollection;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\Activitylog\LogOptions;
+use App\Models\Traits\HasExtraData;
+use App\Models\Contracts\WithExtraData;
 
-class Ticket extends Model
+class Ticket extends Model implements WithExtraData
 {
     use HasFactory;
     use SoftDeletes;
     use LogsActivity;
+    use HasExtraData;
 
     protected $fillable = [
         'title',

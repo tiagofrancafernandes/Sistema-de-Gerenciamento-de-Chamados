@@ -7,6 +7,7 @@ use Inertia\Inertia;
 use App\Http\Controllers\Web\CustomerController;
 use App\Http\Controllers\Web\BladeIconsController;
 use App\Http\Controllers\Web\LocaleController;
+use App\Http\Controllers\Common\AppFileController;
 
 /*
 |--------------------------------------------------------------------------
@@ -61,3 +62,4 @@ Route::get('blade-icons/{icon}', [BladeIconsController::class, 'showIcon'])
 require __DIR__ . '/auth.php';
 
 LocaleController::routes();
+AppFileController::routes();
