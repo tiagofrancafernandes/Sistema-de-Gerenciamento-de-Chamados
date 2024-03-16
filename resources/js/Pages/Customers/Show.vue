@@ -3,6 +3,8 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import ModalForm from '@/Pages/Customers/ModalForm.vue';
 import { computed, ref } from 'vue';
 import { Head, usePage } from '@inertiajs/vue3'
+import { lang } from '@/helpers/localization';
+import { get } from 'radash';
 
 const page = usePage();
 const user = computed(() => page.props.auth.user);
@@ -13,6 +15,9 @@ const props = defineProps({
     },
     customerId: {
         type: String,
+    },
+    customer: {
+        type: Object,
     },
 })
 
@@ -32,6 +37,10 @@ const getAsset = (asset) => {
     }
 
     return `${assetUrl}/${asset}`;
+}
+
+const getCustomer = (key = null, defaultValue = null) => {
+    return key ? get(props.customer || {}, key, defaultValue = null) : customer;
 }
 
 const fakeList = ["dolore", "asperiores", "possimus", "quisquam", "placeat", "illo"];
@@ -111,6 +120,9 @@ let modalInfo = ref({
                                 <!-- avatar -->
                                 <div
                                     class="w-24 h-24 mr-2 relative flex justify-end items-end -mt-10"
+                                    :class="[
+                                        'hidden', // Ocultar enquando desenvolvo as novas funcionalidades
+                                    ]"
                                 >
                                     <img
                                         src="https://images.unsplash.com/photo-1551006917-3b4c078c47c9?ixlib=rb-1.2.1&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=200&fit=max&ixid=eyJhcHBfaWQiOjE3Nzg0fQ"
@@ -137,7 +149,7 @@ let modalInfo = ref({
                                     <h2
                                         class="mb-2 text-lg text-gray-900 whitespace-nowrap dark:text-gray-100"
                                     >
-                                        Jitu Chauhan
+                                        {{ getCustomer('name') }}
                                         <a
                                             href="#!"
                                             class="text-decoration-none"
@@ -148,7 +160,9 @@ let modalInfo = ref({
                                             data-bs-original-title=""
                                         ></a>
                                     </h2>
-                                    <p class="mb-0 text-gray-500">@imjituchauhan</p>
+                                    <p class="mb-0 text-gray-500">
+                                    <!-- Acho que aqui é um bom lugar para mostrar o telefone, email etc -->
+                                    </p>
                                 </div>
                             </div>
                             <div>
@@ -162,7 +176,7 @@ let modalInfo = ref({
                                 >
                                     <template v-slot:trigger>
                                         <span v-html="getIcon('pencil', 'w-3 h-3 text-white me-2')"></span>
-                                        Edit customer
+                                        {{ lang('Edit customer') }}
                                     </template>
                                 </ModalForm>
                             </div>

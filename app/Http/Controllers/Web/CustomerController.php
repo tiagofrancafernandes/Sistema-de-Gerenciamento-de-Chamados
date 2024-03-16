@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
+use App\Models\Customer;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -19,6 +20,7 @@ class CustomerController extends Controller
     {
         return Inertia::render('Customers/Show', [
             'customerId' => $customerId,
+            'customer' => $customerId ? Customer::where('id', $customerId)->firstOrFail() : null,
             'icons' => [
                 'pencil' => svg('heroicon-s-pencil')->toHtml(),
                 'check-badge' => svg('heroicon-s-check-badge')->toHtml(),

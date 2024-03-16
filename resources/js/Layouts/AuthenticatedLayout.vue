@@ -10,6 +10,7 @@ import ResponsiveNavColorChange from "@/Components/ResponsiveNavColorChange.vue"
 import { Link, usePage } from "@inertiajs/vue3";
 import { initFlowbite } from 'flowbite';
 // import StringHelpers from '@/helpers/string-helpers'
+import { lang } from '@/helpers/localization';
 
 import {
     listenSchemeChange,
@@ -75,7 +76,7 @@ const links = [
         key: 'dashboard',
         route: 'dashboard',
         url: null,
-        label: 'Dashboard',
+        label: lang('Dashboard'),
         newTab: false,
         activeWhen: [
             'dashboard'
@@ -91,7 +92,7 @@ const links = [
         key: 'customers.index',
         route: 'customers.index',
         url: null,
-        label: 'Customers',
+        label: lang({key: 'models.Customer.pluralLabel', defaultValue: 'Customers'}),
         newTab: true,
         isPost: false,
         activeWhen: [
@@ -124,17 +125,17 @@ const links = [
             genLink({
                 url: '#!',
                 as: 'button',
-                label: 'Color change',
+                label: lang('Color change'),
                 component: ResponsiveNavColorChange,
                 show: () => true, // false|true
             }),
             genLink({
                 route: 'profile.edit',
-                label: 'Profile',
+                label: lang('Profile'),
             }),
             genLink({
                 route: 'logout',
-                label: 'Log Out',
+                label: lang('Log Out'),
                 isPost: true,
             }),
         ],

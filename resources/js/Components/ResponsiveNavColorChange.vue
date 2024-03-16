@@ -6,7 +6,9 @@ import {
     loadTheme,
     switchTheme,
     setTheme,
-} from '@/helpers/color-theme'
+} from '@/helpers/color-theme';
+
+import { lang } from '@/helpers/localization';
 
 onMounted(() => {
     listenSchemeChange();
@@ -70,6 +72,6 @@ let colorIcon = computed(() => {
         v-html="colorIcon"
         class="text-center inline-flex items-center"
     ></span>
-    Switch Theme
+    {{ lang('Switch Theme') }}
 </button>
 </template>

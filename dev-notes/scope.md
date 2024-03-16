@@ -56,3 +56,7 @@
 
 * Um usuário da empresa PODE ver TODOS os pedidos da empresa.
 * Um usuário **só pode** ADICIONAR COMENTÁRIO nos próprios chamados ou se for um ADMIN do cliente
+
+
+
+<!-- import { lang } from '@/helpers/localization'; -->
