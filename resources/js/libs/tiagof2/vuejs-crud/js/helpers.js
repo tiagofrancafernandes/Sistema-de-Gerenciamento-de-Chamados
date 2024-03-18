@@ -203,7 +203,7 @@ export const generateTableInfo = (tableID, params = {}) => {
                 }),
                 recordAttributes,
                 routeStaticParams,
-            };//WIP
+            };//TODO: remover
 
             extraData = isObject(extraData) ? extraData : {};
 
@@ -214,7 +214,7 @@ export const generateTableInfo = (tableID, params = {}) => {
 
             // recordKeyAttribute
 
-            return '';//WIP
+            return '';//TODO: remover
         },
     };
 }

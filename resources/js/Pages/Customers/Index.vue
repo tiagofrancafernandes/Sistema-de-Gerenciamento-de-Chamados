@@ -106,9 +106,9 @@ let tablecolumns = [
     //         return value;
     //     },
     // },
-];//WIP
+];//TODO: remover
 
-const tableID = 'my-table';//WIP
+const tableID = 'my-table';//TODO: remover
 
 const tableInfo = generateTableInfo({
     id: tableID,
@@ -120,6 +120,8 @@ const tableInfo = generateTableInfo({
 })
 
 const getTablecolumns = () => tablecolumns.map(item => generateHeader(tableInfo, item));
+
+globalThis.temp_tableInfo = tableInfo;//TODO: remover
 
 console.log('temp_tableInfo.getUrl', temp_tableInfo.getUrl('index'));
 console.log('tableInfo', tableInfo);
