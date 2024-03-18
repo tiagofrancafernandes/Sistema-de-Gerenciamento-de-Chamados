@@ -538,3 +538,56 @@
     </div>
 </div>
 ```
+
+### Buttons
+
+```html
+
+    <TwButton
+        @click="handleTabChange('contact')"
+    >Go to contact</TwButton>
+
+    <TwButton>
+        Conteudo
+    </TwButton>
+
+    <TwRefreshButton
+        :data="{
+            algo: null,
+        }"
+    >
+        TwRefreshButton
+    </TwRefreshButton>
+```
+
+
+### Table generator
+
+##### Listening header click
+```html
+<template
+    v-for="header in getTablecolumns()"
+    v-key="header.uid"
+>
+    <th
+        class="px-4 py-3"
+        @click="header.onClickHeader"
+    >
+        {{ header.label }}
+    </th>
+</template>
+```
+*or*
+```html
+<template
+    v-for="header in getTablecolumns()"
+    v-key="header.uid"
+>
+    <th
+        class="px-4 py-3"
+        @click="header.onClickHeader"
+    >
+        {{ header.label }}
+    </th>
+</template>
+```

@@ -37,6 +37,10 @@ class Ticket extends Model implements WithExtraData
         'extra_data' => AsCollection::class,
     ];
 
+    protected $appends = [
+        'statusEnum',
+    ];
+
     public function getActivitylogOptions(): LogOptions
     {
         // https://spatie.be/docs/laravel-activitylog/v4/advanced-usage/logging-model-events
@@ -75,5 +79,61 @@ class Ticket extends Model implements WithExtraData
     public function agent(): BelongsTo
     {
         return $this->belongsTo(User::class, 'agent_id', 'id');
+    }
+
+    public function getDecodedContentAttribute()
+    {
+        if (!$this->content) {
+            return '';
+        }
+
+        return html_entity_decode($this->content);
+    }
+
+    public function getLastTagsAttribute()
+    {
+        $getTagColor = fn () => \Arr::random([
+            'dark',
+            'gray',
+            'red', 'danger',
+            'green', 'success',
+            'yellow', 'warning',
+            'indigo',
+            'purple',
+            'pink',
+            'default',
+            'info',
+        ]);
+
+        return [
+            fluent([
+                'color' => $color = $getTagColor(),
+                'name' => $color,
+            ]),
+            fluent([
+                'color' => $color = $getTagColor(),
+                'name' => $color,
+            ]),
+            fluent([
+                'color' => $color = $getTagColor(),
+                'name' => $color,
+            ]),
+            fluent([
+                'color' => $color = $getTagColor(),
+                'name' => $color,
+            ]),
+        ];
+    }
+
+    public function getStatusEnumAttribute()
+    {
+        $enum = $this->status;
+
+        return [
+            'name' => $enum?->name ?? null,
+            'value' => $enum?->value ?? null,
+            'color' => $enum?->color() ?? 'default',
+            'label' => $enum?->label(),
+        ];
     }
 }

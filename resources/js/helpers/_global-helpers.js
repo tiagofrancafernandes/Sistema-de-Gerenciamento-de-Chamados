@@ -1,11 +1,16 @@
 import * as radash from 'radash';
-import StringHelpers from '@/helpers/string-helpers';
+import * as StringHelpers from '@/helpers/string-helpers';
 import * as localization from '@/helpers/localization';
+import * as TypeHelpers from '@/helpers/type-helpers';
+import * as DataValidationHelpers from '@/helpers/data-validation'
+import * as VueCrudHelpers from '@tiagof2/vuejs-crud/js/helpers'
 
-globalThis.StringHelpers = StringHelpers();
 globalThis._ = radash;
 globalThis.radash = radash;
 globalThis.localization = localization;
-globalThis.lodash = 'Try "radash"';
+globalThis.TypeHelpers = TypeHelpers;
+globalThis.StringHelpers = StringHelpers;
+globalThis.VueCrudHelpers = VueCrudHelpers;
+globalThis.DataValidationHelpers = DataValidationHelpers;
 
 globalThis.__lang = localization.lang;

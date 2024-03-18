@@ -24,6 +24,7 @@
         "laravel/tinker": "^2.8",
         "spatie/invade": "^2.0",
         "spatie/laravel-activitylog": "^4.8",
+        "spatie/laravel-html": "^3.6",
         "tiagof2/laravel-site-config": "1.x-dev|^1.0",
         "tightenco/ziggy": "^1.0"
     },

@@ -1,11 +1,13 @@
 <script setup>
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import ModalForm from '@/Pages/Customers/ModalForm.vue';
-import { computed, ref } from 'vue';
+import { computed, ref, onMounted } from 'vue'
 import { Head, usePage } from '@inertiajs/vue3'
 import { lang } from '@/helpers/localization';
-import { get } from 'radash';
+// import { get } from 'radash';
+import { __get } from '@/helpers/data-helpers';
 
+import CustomerTab from '@/Pages/Customers/partials/CustomerTab.vue'
 const page = usePage();
 const user = computed(() => page.props.auth.user);
 
@@ -16,8 +18,18 @@ const props = defineProps({
     customerId: {
         type: String,
     },
+    activeTab: {
+        type: String,
+        default: 'about',
+    },
     customer: {
         type: Object,
+    },
+    tabContent: {
+        default: [],
+    },
+    loadOnTab: {
+        default: null,
     },
 })
 
@@ -40,7 +52,7 @@ const getAsset = (asset) => {
 }
 
 const getCustomer = (key = null, defaultValue = null) => {
-    return key ? get(props.customer || {}, key, defaultValue = null) : customer;
+    return key ? __get(props.customer || {}, key, defaultValue = null) : customer;
 }
 
 const fakeList = ["dolore", "asperiores", "possimus", "quisquam", "placeat", "illo"];
@@ -91,6 +103,8 @@ let modalInfo = ref({
         customerId: customerId.value,
     }
 })
+
+const getActiveTab = computed(() => props.activeTab);
 </script>
 
 <template>
@@ -182,128 +196,14 @@ let modalInfo = ref({
                             </div>
                         </div>
                         <!-- nav -->
-                        <div class=" ">
-                            <!-- list -->
-                            <ul
-                                class="flex flex-no-wrap overflow-auto text-center text-gray-500 border-gray-300/50 border-t p-0"
-                            >
-                                <template v-for="(item, index) in fakeList" v-key="index">
-                                    <li class="mr-1">
-                                        <a
-                                            href="#!"
-                                            class="p-4 font-semibold border-t-4 inline-block"
-                                            v-bind:class="[
-                                                ...(
-                                                    index !== 0 ? [ // inactive
-                                                        'border-transparent',
-                                                        'bg-indigo-300/50 hover:bg-indigo-300', // Light bg
-                                                        'text-indigo-600 hover:text-indigo-700', // Light text
-                                                        'hover:border-indigo-600', // Light border
-
-                                                        'dark:hover:bg-indigo-600', // Dark bg
-                                                        'dark:text-indigo-100 dark:hover:text-indigo-100', // Dark text
-                                                        'dark:hover:border-indigo-100', // Dark border
-                                                    ] : [ // Active
-                                                        'active',
-
-                                                        'bg-indigo-300', // Light bg
-                                                        'text-indigo-600', // Light text
-                                                        'border-indigo-600', // Light border
-
-                                                        'dark:bg-indigo-600', // Dark bg
-                                                        'dark:text-indigo-100', // Dark text
-                                                        'dark:border-indigo-100', // Dark border
-                                                    ]
-                                                ),
-                                            ]"
-                                            v-bind:aria-current="
-                                                index === 0 ? 'page' : null
-                                            "
-                                        >{{ item }}</a>
-                                    </li>
-                                </template>
-                            </ul>
+                        <div class="w-full">
+                            <CustomerTab
+                                :activeTab="props.activeTab"
+                                :tabContent="tabContent"
+                                :loadOnTab="loadOnTab"
+                            />
                         </div>
                     </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="container w-7xl mx-auto px-6 grid py-6">
-            <div class="w-full overflow-hidden rounded-lg shadow-xs">
-                <div class="mb-6 grid grid-cols-1 gap-x-6 gap-y-8 xl:grid-cols-3 md:grid-cols-2">
-                    <template v-for="listItem in fakeList" v-key="listItem">
-                        <!-- card -->
-                        <div
-                            class="p-6 bg-white text-gray-800 border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:text-gray-200 dark:border-gray-700 md:w-full"
-                        >
-                            <!-- card body -->
-                            <div class="card-body">
-                                <!-- card title -->
-                                <h4 class="mb-6 font-semibold">Sobre o cliente</h4>
-                                <h5
-                                    class="uppercase tracking-widest text-sm font-semibold"
-                                >
-                                    Bio
-                                </h5>
-                                <!-- text -->
-                                <p class="mt-2 mb-6">
-                                    Lorem ipsum dolor sit amet, consectetur adipiscing
-                                    elit. Suspen disse var ius enim in eros elementum
-                                    tristique. Duis cursus, mi quis viverra ornare, eros
-                                    dolor interdum nulla, ut commodo diam libero vitae
-                                    erat.
-                                </p>
-                                <!-- row -->
-                                <div class="mb-5">
-                                    <!-- text -->
-                                    <h5
-                                        class="uppercase tracking-widest text-sm font-semibold"
-                                    >
-                                        Position
-                                    </h5>
-                                    <p class="mb-0">Theme designer at Bootstrap.</p>
-                                </div>
-                                <!-- content -->
-                                <div class="flex flex-row justify-between mb-5">
-                                    <div class="flex-1">
-                                        <h5
-                                            class="uppercase tracking-widest text-sm font-semibold"
-                                        >
-                                            Phone
-                                        </h5>
-                                        <p class="mb-0">+32112345689</p>
-                                    </div>
-                                    <div class="flex-1">
-                                        <h5
-                                            class="uppercase tracking-widest text-sm font-semibold"
-                                        >
-                                            Date of Birth
-                                        </h5>
-                                        <p class="mb-0">01.10.1997</p>
-                                    </div>
-                                </div>
-                                <div class="flex flex-row justify-between mb-5">
-                                    <div class="flex-1">
-                                        <h5
-                                            class="uppercase tracking-widest text-sm font-semibold"
-                                        >
-                                            Email
-                                        </h5>
-                                        <p class="mb-0">dashui@gmail.com</p>
-                                    </div>
-                                    <div class="flex-1">
-                                        <h5
-                                            class="uppercase tracking-widest text-sm font-semibold"
-                                        >
-                                            Location
-                                        </h5>
-                                        <p class="mb-0">Ahmedabad, India</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </template>
                 </div>
             </div>
         </div>

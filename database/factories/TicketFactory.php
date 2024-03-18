@@ -22,7 +22,7 @@ class TicketFactory extends Factory
     {
         return [
             'title' => fake()->words(5, true),
-            'content' => htmlentities(
+            'content' => (
                 '<p>Quo cumque voluptatem inventore ut expedita qui iusto. Eum et et qui ea ut unde.</p>'
                 . '<p> Rerum enim ea cum quaerat non tenetur. Minima voluptas et maiores accusamus ut.</p>'
                 . '<p>Ea minima ullam delectus aut  suscipit. . Numquam est voluptatem minus iste voluptatum est. </p>'

@@ -9,7 +9,6 @@ import ResponsiveNavLink from "@/Components/ResponsiveNavLink.vue";
 import ResponsiveNavColorChange from "@/Components/ResponsiveNavColorChange.vue";
 import { Link, usePage } from "@inertiajs/vue3";
 import { initFlowbite } from 'flowbite';
-// import StringHelpers from '@/helpers/string-helpers'
 import { lang } from '@/helpers/localization';
 
 import {

@@ -1,4 +1,5 @@
-import { get } from 'radash';
+// import { get } from 'radash';
+import { __get } from '@/helpers/data-helpers';
 import { usePage } from '@inertiajs/vue3'
 
 const page = usePage();
@@ -10,7 +11,7 @@ export const getPageAppProps = (key = null, defaultValue = null) => {
         return defaultValue;
     }
 
-    return  (key === null) ? appProps: get(appProps, key, defaultValue);
+    return  (key === null) ? appProps: __get(appProps, key, defaultValue);
 }
 
 export const getLocale = (defaultValue = 'en') => {
@@ -57,7 +58,7 @@ export const translate = (
         ...restOfKeys,
     ].filter(item => item).join('.');
 
-    return get(getTranslations(), newKey, (defaultValue || originalKey));
+    return __get(getTranslations(), newKey, (defaultValue || originalKey));
 }
 
 export const lang = (
