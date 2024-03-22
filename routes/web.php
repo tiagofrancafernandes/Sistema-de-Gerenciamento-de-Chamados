@@ -8,6 +8,7 @@ use App\Http\Controllers\Web\CustomerController;
 use App\Http\Controllers\Web\BladeIconsController;
 use App\Http\Controllers\Web\LocaleController;
 use App\Http\Controllers\Common\AppFileController;
+use Illuminate\Http\Request;
 
 /*
 |--------------------------------------------------------------------------
@@ -63,3 +64,22 @@ require __DIR__ . '/auth.php';
 
 LocaleController::routes();
 AppFileController::routes();
+
+Route::get('toast-test/{type?}', function (Request $request, ?string $type = null) {
+    $title = $request->input('title', 'Title here');
+    $message = $request->input('message', 'Mesage here');
+    $type ??= $request->input('type', 'suscess');
+    $options = (array) $request->input('options');
+    $redirectTo ??= $request->input('redirect_to', route('customers.index'));
+
+    toast(
+        $message,
+        $title,
+        $type,
+        $options
+    );
+
+    return back();
+
+    return redirect()->to($redirectTo);
+})->name('toast-test');

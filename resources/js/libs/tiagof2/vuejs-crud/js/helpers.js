@@ -72,13 +72,13 @@ export const getColumnData = (headerInfo, data) => {
 }
 
 export const generateTablePageInfo = (
-    route, // Parte of route name
+    routeName, // Parte of route name
     fullRoute = false, // If is a full route or partial. Default is `false` (partial)
     recordAttributes = [], // Attributes to get from record. Ex ['id']
     routeStaticParams = [], // Static initial value (used on mount page);
 ) => {
-    if (!route || notFilled(validStringOr(route))) {
-        throw `'route' must be a valid route string.`
+    if (!routeName || notFilled(validStringOr(routeName))) {
+        throw `'routeName' must be a valid route string.`
     }
 
     recordAttributes = valueIfFilled(recordAttributes);
@@ -88,7 +88,7 @@ export const generateTablePageInfo = (
     routeStaticParams = isObject(routeStaticParams) || isArray(routeStaticParams) ? routeStaticParams : null;
 
     return {
-        route: route,
+        routeName: routeName,
         fullRoute: Boolean(fullRoute),
         recordAttributes: recordAttributes,
         routeStaticParams: routeStaticParams,
@@ -112,7 +112,10 @@ export const generateTableInfo = (tableID, params = {}) => {
     const routePrefix = valueIfFilled(validStringOr(params.routePrefix), '');
     let pages = __get(params, 'pages');
 
-    // generateTablePageInfo
+    let tablecolumns = __get(params, 'tablecolumns', []);
+    let tableExtraData = valueIfFilled(__get(params, 'tableExtraData', {}));
+
+    tablecolumns = isArray(tablecolumns) ? tablecolumns : [];
 
     pages = (pages || pages === false) || isObject(pages) ? pages : false;
 
@@ -122,6 +125,79 @@ export const generateTableInfo = (tableID, params = {}) => {
         routePrefix: routePrefix,
         recordKeyAttribute: recordKeyAttribute,
         pages: (!pages || pages === false) ? false : pages,
+        tablecolumns: tablecolumns,
+        tableExtraData: isObject(tableExtraData) ? tableExtraData : {},
+        title: nullSafe(params.title),
+        tanslateTitle: nullSafe(params.tanslateTitle, false),
+        label: nullSafe(params.label),
+        tanslateTabel: nullSafe(params.tanslateTabel, false),
+        pluralLabel: nullSafe(params.pluralLabel),
+        tanslateTluralLabel: nullSafe(params.tanslateTluralLabel, false),
+        call(method, ...params) {
+            method = validStringOr(method);
+
+            if (!method || !(method in this)) {
+                return null;
+            }
+
+            return this[method](...params);
+        },
+        get(notation, defaultValue = null) {
+            return __get(this, notation, defaultValue);
+        },
+        getIf(notation, validators, defaultValue = null) {
+            const NO_VALIDATOR = '::NO_VALIDATOR::';
+
+            validators = valueIfFilled(validators, NO_VALIDATOR);
+
+            if (validators === NO_VALIDATOR) {
+                return __get(this, notation, defaultValue);
+            }
+
+            validators = TypeHelpers.filterTrueKeys(isArray(validators) ? validators : [validators]);
+
+            if (!validators.length) {
+                return defaultValue;
+            }
+
+            let result = __get(this, notation, defaultValue);
+
+            for (let index = 0; index < validators.length; index++) {
+                let validator = validators[index];
+
+                if (isString(validator)) {
+                    validator = globalThis[validStringOr(validator)] ?? null;
+                }
+
+                if (!validator || !typeofIs(validator, 'Function')) {
+                    throw `The 'validator' param must be a valid callable`;
+                }
+
+                if (!validator(result)) {
+                    return defaultValue;
+                }
+            }
+
+            return result;
+        },
+        getColumns(...args) {
+            let tablecolumns = valueIfFilled(this.tablecolumns);
+
+            if (!tablecolumns) {
+                return [];
+            }
+
+            return tablecolumns.map(item => generateHeader(this, item));
+        },
+        getTableExtraData(...args) {
+            let tableExtraData = valueIfFilled(this.tableExtraData);
+
+            if (!tableExtraData || !isObject(tableExtraData)) {
+                return {};
+            };
+
+            return tableExtraData;
+        },
         getPageInfo(pageName) {
             pageName = validStringOr(pageName);
 
@@ -137,28 +213,28 @@ export const generateTableInfo = (tableID, params = {}) => {
 
             let pageInfo = __get(pages, pageName);
 
-            if (!isObject(pageInfo) || !__get(pageInfo, 'route')) {
+            if (!isObject(pageInfo) || !__get(pageInfo, 'routeName')) {
                 return null;
             }
 
-            let route = valueIfFilled(validStringOr(__get(pageInfo, 'route')));
+            let routeName = valueIfFilled(validStringOr(__get(pageInfo, 'routeName')));
             let fullRoute = valueIfFilled(__get(pageInfo, 'fullRoute'));
             let routePrefix = valueIfFilled(this.routePrefix);
 
             if (fullRoute) {
-                return route ? route : null;
+                return routeName ? routeName : null;
             }
 
-            route = valueIfFilled(
+            routeName = valueIfFilled(
                 [
                     routePrefix,
-                    route,
+                    routeName,
                 ]
                 .filter(item => itemIsFilled(item))
                 .join('.')
             );
 
-            pageInfo['resolved_route'] = route ? route : null;
+            pageInfo['resolved_route'] = routeName ? routeName : null;
 
             return  valueIfFilled(pageInfo);
         },
@@ -178,32 +254,9 @@ export const generateTableInfo = (tableID, params = {}) => {
             let recordAttributes = valueIfFilled(__get(pageInfo, 'recordAttributes'));
             let routeStaticParams = valueIfFilled(__get(pageInfo, 'routeStaticParams'));
 
-            let fakeData = {
-                user: {
-                    address: {
-                        city: {
-                            name: 'Montanhas',
-                            places: [
-                                'praça 1',
-                                'praça 2',
-                            ]
-                        }
-                    }
-                }
-            };
-
-            return {
-                city: __get(fakeData, ['user', 'address', 'city']),
-                city2: __get(fakeData, ['user', 'address', 'city', 'places', 0]),
-                city3: __get(fakeData, {
-                    user: true,
-                    address: 1,
-                    city: true,
-                    name: true,
-                }),
-                recordAttributes,
-                routeStaticParams,
-            };//TODO: remover
+            if (!recordAttributes || !routeStaticParams) {
+                return;
+            }
 
             extraData = isObject(extraData) ? extraData : {};
 
@@ -215,6 +268,18 @@ export const generateTableInfo = (tableID, params = {}) => {
             // recordKeyAttribute
 
             return '';//TODO: remover
+        },
+        getTitle() {
+            let title = validStringOr(this.getIf('title'));
+            return title && this.tanslateTitle ? lang({key: title}) : title;
+        },
+        getLabel() {
+            let label = validStringOr(this.getIf('label'));
+            return label && this.tanslateLabel ? lang({key: label}) : label;
+        },
+        getPluralLabel() {
+            let pluralLabel = validStringOr(this.getIf('pluralLabel'));
+            return pluralLabel && this.tanslatePluralLabel ? lang({key: pluralLabel}) : pluralLabel;
         },
     };
 }

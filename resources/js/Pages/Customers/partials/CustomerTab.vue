@@ -1,7 +1,6 @@
 <script setup>
 import { computed, ref, shallowRef, onMounted } from 'vue';
 import { usePage, useForm, router } from "@inertiajs/vue3";
-import * as inertiaHelpers from '@/helpers/inertia-helpers'
 
 import About from "@/Pages/Customers/partials/tabs/About.vue";
 import Contact from "@/Pages/Customers/partials/tabs/Contact.vue";
@@ -23,7 +22,7 @@ const props = defineProps({
 })
 
 const handleTabChange = (data) => {
-    inertiaHelpers.reloadCurrentGet(data);
+    AppInertiaHelpers.reloadCurrentGet(data);
 }
 
 const tabs = computed(() => [

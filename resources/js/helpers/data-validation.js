@@ -4,6 +4,11 @@ import {
     isNumeric,
     isString,
     typeofIs,
+    filterObject,
+    filterTrueKeys,
+    isFunction,
+    getConstructorName,
+    matchOr,
 } from '@/helpers/type-helpers'
 
 import { getLocale } from '@/helpers/localization';
@@ -13,6 +18,12 @@ export {
     isObject,
     isNumeric,
     isString,
+    typeofIs,
+    filterObject,
+    filterTrueKeys,
+    isFunction,
+    getConstructorName,
+    matchOr,
 };
 
 export const itemIsFilled = (value = null) => {

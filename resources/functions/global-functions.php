@@ -117,3 +117,29 @@ if (!function_exists('safeOr')) {
         }
     }
 }
+
+if (!function_exists('toast')) {
+    /**
+     * toast function
+     *
+     * @param string $message
+     * @param string|null $title
+     * @param string $type
+     * @param array|null $options
+     *
+     * @return void
+     */
+    function toast(
+        string $message,
+        ?string $title = null,
+        string $type = 'success',
+        ?array $options = null,
+    ): void {
+        App\Helpers\ToastHelpers::toast(
+            $message,
+            $title,
+            $type,
+            $options,
+        );
+    }
+}

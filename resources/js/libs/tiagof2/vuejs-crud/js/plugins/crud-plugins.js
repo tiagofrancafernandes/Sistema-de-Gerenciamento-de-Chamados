@@ -5,7 +5,9 @@ import {
     generateHeader,
     generateTablePageInfo,
     generateTableInfo,
-} from '@tiagof2/vuejs-crud/js/helpers'
+} from '@tiagof2/vuejs-crud/js/helpers';
+
+import RegisterComponentsPlugin from '@/libs/tiagof2/vuejs-crud/js/plugins/register-components-plugin';
 
 /**
  * if 'loadFunctionsGlobally' is `true`, all functions do not need to be loaded manually via 'import'
@@ -14,6 +16,8 @@ import {
 export const VueCrudHelpersPlugin = (loadFunctionsGlobally = false) => {
     return {
         install(app, options) {
+            app.use(RegisterComponentsPlugin);
+
             let methods = {
                 getColumnLabel,
                 defaultColumnContentHandler,

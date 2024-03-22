@@ -29,8 +29,9 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
-        return [
-            ...parent::share($request),
+        $toast = \Arr::wrap($request->session()->get('flash.toast', []));
+
+        return array_merge(parent::share($request), [
             'auth' => [
                 'user' => $request->user(),
             ],
@@ -41,7 +42,28 @@ class HandleInertiaRequests extends Middleware
                 'locale' => config('app.locale', 'en'),
                 'translations' => static::getTranslations(),
             ],
-        ];
+            'messages' => fn () => $request->session()->get('messages'),
+            'laravel_flash_message' => fn () => $request->session()->get('laravel_flash_message'),
+            'flash' => fn () => $request->session()->get('flash'),
+            'toast' => fn () => static::prepareToast(
+                [
+                    'error' => $request->session()->has('error') ? [
+                        'title' => __('Error'),
+                        'message' => $request->session()->get('error'),
+                        'type' => 'error',
+                    ] : null,
+                ],
+                (array) $toast,
+            ),
+        ]);
+    }
+
+    public static function prepareToast(array ...$params)
+    {
+        return array_map(
+            fn ($item) => [...$item, 'uid' => uniqid()],
+            array_filter(array_merge(...$params))
+        );
     }
 
     public static function getTranslations(): array

@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 
 class CustomerController extends Controller
 {
@@ -16,11 +17,16 @@ class CustomerController extends Controller
     {
         return Inertia::render('Customers/Index', [
             'items' => Customer::paginate(20),
+            'hookComponents' => [
+                'beforeTable' => 'IndexBeforeTable',
+                'afterTable' => 'IndexBeforeTable',
+            ],
         ]);
     }
 
     public function show(Request $request, int|string $customerId): Response
     {
+        session()->flash('toast', 'teste');
         $tab = $request?->get('tab');
 
         return Inertia::render('Customers/Show', [
@@ -89,13 +95,15 @@ class CustomerController extends Controller
         ]);
     }
 
-    public function update(Request $request, int|string $customerId): JsonResponse
+    public function update(Request $request, int|string $customerId): JsonResponse|RedirectResponse
     {
         $request->validate([
             'name' => ['required', 'min:3'],
             'email' => ['required', 'email'],
         ]);
 
-        return response()->json($request->all());
+        toast('Atualizado!');
+
+        return redirect()->route('customers.index');
     }
 }

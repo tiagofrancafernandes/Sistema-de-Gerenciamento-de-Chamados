@@ -10,6 +10,10 @@ import ResponsiveNavColorChange from "@/Components/ResponsiveNavColorChange.vue"
 import { Link, usePage } from "@inertiajs/vue3";
 import { initFlowbite } from 'flowbite';
 import { lang } from '@/helpers/localization';
+import { toaster, useAppToaster, processPageToasts } from '@/helpers/toast-helpers'
+import { useToastify } from '@/libs/tiagof2/toastify';
+
+import ToastList from '@/Components/prime-vue-extended/ToastList.vue';
 
 import {
     listenSchemeChange,
@@ -17,11 +21,25 @@ import {
     loadTheme,
 } from '@/helpers/color-theme'
 
-// initialize components based on data attribute selectors
+const page = usePage();
+const appToaster = useAppToaster();
+
+const appToastify = useToastify({
+    defaultLife: 15000,
+});
+
+console.log('page.props?.toast', JSON.stringify(page.props?.toast, null, 4));
+
+appToaster.onSent((ev) => appToastify.processAppToasterEvent(ev));
+
 onMounted(() => {
     listenSchemeChange();
     loadTheme();
     initFlowbite();
+
+    if (page.props?.toast) {
+        processPageToasts(page.props?.toast);
+    }
 });
 
 const showingNavigationDropdown = ref(false);
@@ -30,8 +48,6 @@ const currentRouteIn = (...routeNames) => {
     routeNames = routeNames.flat();
     return !!routeNames.find(routeName => typeof routeName === 'string' && route().current(routeName));
 }
-
-const page = usePage();
 
 const profileNavText = computed(
     () => `
@@ -207,6 +223,7 @@ const getLinks = (linksFor = null, group = null) => {
 </script>
 
 <template>
+    <ToastList />
     <div>
         <div class="min-h-screen bg-gray-100 dark:bg-gray-900">
             <nav

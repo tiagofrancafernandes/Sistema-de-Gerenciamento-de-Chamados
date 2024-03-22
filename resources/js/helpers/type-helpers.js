@@ -68,3 +68,21 @@ export const typeofIs = (value, toCheck) => {
         return false;
     }
 }
+
+export const matchOr = (value, collection, defaultValue = null) => {
+    if (typeof collection !== 'object') {
+        return defaultValue;
+    }
+
+    if (Array.isArray(collection)) {
+        return collection.includes(value) ? value : defaultValue;
+    }
+
+    value = ['string', 'number'].includes(typeof value) ? value : 'NO_VAL';
+
+    if (value === 'NO_VAL') {
+        return defaultValue;
+    }
+
+    return (value in collection) ? collection[value] : defaultValue;
+}

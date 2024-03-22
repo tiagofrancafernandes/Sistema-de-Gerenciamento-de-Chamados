@@ -11,7 +11,6 @@
 <script setup>
 // import { computed, ref, shallowRef, onMounted } from 'vue';
 // import { usePage, useForm, router } from "@inertiajs/vue3";
-import * as inertiaHelpers from '@/helpers/inertia-helpers'
 import TwButton from '@/Components/Tw/TwButton.vue';
 
 const props = defineProps({
@@ -30,7 +29,7 @@ const props = defineProps({
 })
 
 const defaultRefreshHandler = (data) => {
-    inertiaHelpers.reloadCurrentGet(data);
+    AppInertiaHelpers.reloadCurrentGet(data);
 }
 
 const callRefreshHandler = (data) => {

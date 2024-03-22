@@ -2,6 +2,7 @@
 import { onMounted } from "vue";
 import ApplicationLogo from '@/Components/ApplicationLogo.vue';
 import { Link } from '@inertiajs/vue3';
+import { initFlowbite } from 'flowbite';
 
 import {
     listenSchemeChange,

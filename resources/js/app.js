@@ -1,6 +1,14 @@
 import './bootstrap';
 import '../css/app.css';
 import '@/helpers/_global-helpers';
+// import 'primevue/resources/themes/aura-light-green/theme.css'
+// import 'primevue/resources/themes/aura-light-indigo/theme.css'
+// import 'primevue/resources/themes/aura-light-teal/theme.css'
+// import 'primevue/resources/themes/aura-dark-green/theme.css'
+import 'primevue/resources/themes/luna-blue/theme.css'
+
+import PrimeVue from 'primevue/config';
+import ToastService from 'primevue/toastservice';
 
 import { createApp, h } from 'vue';
 import { createInertiaApp, Link, Head } from '@inertiajs/vue3';
@@ -34,7 +42,11 @@ createInertiaApp({
 
         let inertiaApp = createApp({ render: () => h(App, props) })
             .use(plugin)
-            .use(ZiggyVue);
+            .use(ZiggyVue)
+            .use(PrimeVue, {
+                // unstyled: false,
+            })
+            .use(ToastService);
 
         Object.entries(components).forEach(item => {
             let [name, component] = item;
